@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.Remoting;
+using CookComputing.XmlRpc;
 
 namespace Master
 {
@@ -9,7 +11,8 @@ namespace Master
     {
         static void Main(string[] args)
         {
-            string expression = "((8mod10)*cos(2)/4)+(78^2*7)(-4)";
+            string expression = "((8mod6)*(5/4)+4+6)(9^4)(cos(2)+sin(2))";
+            Console.WriteLine("Calculating: " + expression);
             expression = expression.Replace(".", ",");
             expression = expression.Replace(" ", String.Empty);
             while(expression.Contains(")("))
@@ -46,8 +49,6 @@ namespace Master
                     runAgain = false;
                 }
             }
-            foreach (string s in paranthesis)
-                Console.WriteLine(s);
 
             for (int i = 0; i < paranthesis.Count; i++)
             {
@@ -55,8 +56,9 @@ namespace Master
                 currentExpression = currentExpression.Replace(")", String.Empty);
 
                 paranthesis[i] = CalculateExpression(currentExpression, paranthesis).ToString();
-                Console.WriteLine(paranthesis[i]);
             }
+
+            Console.WriteLine("Solution: " + paranthesis[paranthesis.Count - 1]);
 
             Console.ReadLine();
         }
@@ -96,26 +98,36 @@ namespace Master
                 {
                     float first = float.Parse(expressionParts[i].Substring(0, expressionParts[i].IndexOf("mod")));
                     float second = float.Parse(expressionParts[i].Substring(expressionParts[i].IndexOf("mod") + 3, expressionParts[i].Length - (expressionParts[i].IndexOf("mod") + 3)));
-                    partialResult = first % second;
+
+                    IModOrFactorial proxy = (IModOrFactorial)XmlRpcProxyGen.Create(typeof(IModOrFactorial));
+                    Result ret = proxy.Modulus((double)first, (double)second);
+                    partialResult = (float)ret.result;
                 }
                 if (expressionParts[i].Contains("cos"))
                 {
                     float cosNumber = float.Parse(expressionParts[i].Substring(expressionParts[i].IndexOf("cos") + 3, expressionParts[i].Length - (expressionParts[i].IndexOf("cos") + 3)));
-                    partialResult = (float)Math.Cos((double)cosNumber);
+                    ITrigonometry proxy = (ITrigonometry)XmlRpcProxyGen.Create(typeof(ITrigonometry));
+                    Result ret = proxy.Cosinus((double)cosNumber);
+                    partialResult = (float)ret.result;
                 }
                 if (expressionParts[i].Contains("sin"))
                 {
                     float sinNumber = float.Parse(expressionParts[i].Substring(expressionParts[i].IndexOf("sin") + 3, expressionParts[i].Length - (expressionParts[i].IndexOf("sin") + 3)));
-                    partialResult = (float)Math.Sin((double)sinNumber);
+                    ITrigonometry proxy = (ITrigonometry)XmlRpcProxyGen.Create(typeof(ITrigonometry));
+                    Result ret = proxy.Sinus((double)sinNumber);
+                    partialResult = (float)ret.result;
                 }
                 if (expressionParts[i].Contains("^"))
                 {
                     float first = float.Parse(expressionParts[i].Substring(0, expressionParts[i].IndexOf("^")));
                     float second = float.Parse(expressionParts[i].Substring(expressionParts[i].IndexOf("^") + 1, expressionParts[i].Length - (expressionParts[i].IndexOf("^") + 1)));
-                    partialResult = (float)Math.Pow((double)first, (double)second);
+                    IPowerOf proxy = (IPowerOf)XmlRpcProxyGen.Create(typeof(IPowerOf));
+                    Result ret = proxy.PowerOf((double)first, (double)second);
+                    partialResult = (float)ret.result;
                 }
                 if (expressionParts[i].Contains("!"))
                 {
+                    // Insert factorial parsing thingies here.
                 }
 
                 expressionParts[i] = partialResult.ToString();
@@ -134,7 +146,6 @@ namespace Master
 
             expression = BasicOperator(expression, '-');
 
-            Console.WriteLine("Kalkulert: " + expression);
             return float.Parse(expression);
 
         }

@@ -1,0 +1,34 @@
+$title = Distributed Calculator
+$authors = Jon Vegard Jansen and Robin Tollisen
+$course = IKT414
+$semester = Spring 2013
+$place = Grimstad
+$date = 18th of January 2013
+$status = Final
+$keywords = Distributed system, Calculator, C#, XML-RPC
+
+$abstract = lorem ipsum
+
+@file(frontpage.txt)
+
+
+$ Contents | toc
+
+@toc
+
+# Introduction
+fasd
+## Background
+fdas
+## Problem Statement
+fdsa
+# Implementation
+fdsa
+# Discussion
+fadsfds
+# Conclusion
+fdsafds
+
+# References
+
+@references

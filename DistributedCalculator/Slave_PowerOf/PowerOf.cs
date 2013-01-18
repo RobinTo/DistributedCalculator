@@ -17,6 +17,7 @@ namespace Slave_PowerOf
         {
             Result ret;
             ret.result = Math.Pow(x,y);
+            Console.WriteLine(x.ToString() + "^" + y.ToString() + "=" + ret.result);
             return ret;
         }
     }

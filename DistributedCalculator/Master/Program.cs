@@ -11,56 +11,66 @@ namespace Master
     {
         static void Main(string[] args)
         {
-            string expression = "((8mod6)*(5/4)+4+6)(9^4)(cos(2)+sin(2))";
-            Console.WriteLine("Calculating: " + expression);
-            expression = expression.Replace(".", ",");
-            expression = expression.Replace(" ", String.Empty);
-            while(expression.Contains(")("))
+            string defaultExpression = "(cos(2)+2!*(4^2)/((sin(1))^2)+(4mod3)-12)";
+            bool running = true;
+            while (running)
             {
-                expression = expression.Insert(expression.IndexOf(")(") + 1, "*");
-            }
-            expression = expression.ToLower();
-            expression = expression.Insert(0, "(");
-            expression = expression.Insert(expression.Length, ")");
-            List<string> paranthesis = new List<string>();
-
-            bool runAgain = true;
-            int left = -1;
-            while (runAgain)
-            {
-                int right = expression.IndexOf(')');
-
-                if (right > 0 && right < expression.Length)
+                Console.WriteLine("Enter an expression to calculate, click enter to see sample expression, or exit to exit. If an expression doesn't work, write more parantheses.");
+                Console.WriteLine("");
+                string expression = Console.ReadLine();
+                if (expression.ToLower() == "exit")
+                    break;
+                else if (expression == string.Empty)
+                    expression = defaultExpression;
+                Console.WriteLine("Calculating: " + expression);
+                expression = expression.Replace(".", ",");
+                expression = expression.Replace(" ", String.Empty);
+                while (expression.Contains(")("))
                 {
-                    for (int i = 1; i <= right; i++)
+                    expression = expression.Insert(expression.IndexOf(")(") + 1, "*");
+                }
+                expression = expression.ToLower();
+                expression = expression.Insert(0, "(");
+                expression = expression.Insert(expression.Length, ")");
+                List<string> paranthesis = new List<string>();
+
+                bool runAgain = true;
+                int left = -1;
+                while (runAgain)
+                {
+                    int right = expression.IndexOf(')');
+
+                    if (right > 0 && right < expression.Length)
                     {
-                        left = expression.IndexOf('(', right - i, i);
-                        if (left > 0 && left < expression.Length)
+                        for (int i = 1; i <= right; i++)
+                        {
+                            left = expression.IndexOf('(', right - i, i);
+                            if (left > 0 && left < expression.Length)
+                                break;
+                        }
+                        if (left == -1)
                             break;
+                        paranthesis.Add(expression.Substring(left, right - left + 1));
+                        expression = expression.Remove(left, right - left + 1);
+                        expression = expression.Insert(left, (char)('a' + (paranthesis.Count - 1)) + "arg");
                     }
-                    if (left == -1)
-                        break;
-                    paranthesis.Add(expression.Substring(left, right - left + 1));
-                    expression = expression.Remove(left, right - left + 1);
-                    expression = expression.Insert(left, (char)('a'+(paranthesis.Count - 1))+"arg");
+                    else
+                    {
+                        runAgain = false;
+                    }
                 }
-                else
+
+                for (int i = 0; i < paranthesis.Count; i++)
                 {
-                    runAgain = false;
+                    string currentExpression = paranthesis[i].Replace("(", String.Empty);
+                    currentExpression = currentExpression.Replace(")", String.Empty);
+
+                    paranthesis[i] = CalculateExpression(currentExpression, paranthesis).ToString();
                 }
+
+                Console.WriteLine("Solution: " + paranthesis[paranthesis.Count - 1]);
+                Console.WriteLine("");
             }
-
-            for (int i = 0; i < paranthesis.Count; i++)
-            {
-                string currentExpression = paranthesis[i].Replace("(", String.Empty);
-                currentExpression = currentExpression.Replace(")", String.Empty);
-
-                paranthesis[i] = CalculateExpression(currentExpression, paranthesis).ToString();
-            }
-
-            Console.WriteLine("Solution: " + paranthesis[paranthesis.Count - 1]);
-
-            Console.ReadLine();
         }
 
         public static float CalculateExpression(string expression, List<string> paranthesis)
@@ -82,7 +92,7 @@ namespace Master
 
             for (int i = 0; i < expressionParts.Count(); i++)
             {
-                expression = expression.Replace(expressionParts[i], "arg" + (char)('a'+i));
+                expression = ReplaceFirst(expression, expressionParts[i], "arg" + (char)('a' + i));
             }
 
             for (int i = 0; i < expressionParts.Count(); i++)
@@ -127,7 +137,11 @@ namespace Master
                 }
                 if (expressionParts[i].Contains("!"))
                 {
-                    // Insert factorial parsing thingies here.
+                    float first = float.Parse(expressionParts[i].Substring(0,expressionParts[i].Length-1));
+                    IModOrFactorial proxy = (IModOrFactorial)XmlRpcProxyGen.Create(typeof(IModOrFactorial));
+                    int first2 = Convert.ToInt32(first);
+                    Result ret = proxy.Factorial(first2);
+                    partialResult = (float)ret.result;
                 }
 
                 expressionParts[i] = partialResult.ToString();
@@ -180,7 +194,7 @@ namespace Master
                 {
                     if (expression[i] == '*' || expression[i] == '+' || expression[i] == '/' || expression[i] == '-')
                     {
-                        startIndex = i;
+                        startIndex = i+1;
                         break;
                     }
                     else { startIndex = 0; }
@@ -222,6 +236,16 @@ namespace Master
                 }
             }
             return expression;
+        }
+
+        public static string ReplaceFirst(string expression, string searchString, string replacement)
+        {
+            int pos = expression.IndexOf(searchString);
+            if (pos < 0)
+            {
+                return expression;
+            }
+            return expression.Substring(0, pos) + replacement + expression.Substring(pos + searchString.Length);
         }
     }
 }

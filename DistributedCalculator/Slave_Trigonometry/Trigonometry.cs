@@ -16,6 +16,7 @@ namespace Slave_Trigonometry
         {
             Result ret;
             ret.result = Math.Sin(x);
+            Console.WriteLine("Sin("+x.ToString()+")="+ret.result);
             return ret;
         }
 
@@ -24,6 +25,7 @@ namespace Slave_Trigonometry
         {
             Result ret;
             ret.result = Math.Cos(x);
+            Console.WriteLine("Cos(" + x.ToString() + ")=" + ret.result);
             return ret;
         }
     }

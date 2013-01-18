@@ -16,6 +16,7 @@ namespace Slave_ModFactorial
         {
             Result ret;
             ret.result = x % y;
+            Console.WriteLine(x.ToString() + "mod" + y.ToString() + "=" + ret.result);
             return ret;
         }
 
@@ -42,6 +43,8 @@ namespace Slave_ModFactorial
             }
             else
                 ret.result = 0;
+
+            Console.WriteLine(x.ToString() + "!" + "=" + ret.result);
 
             return ret;
         }

@@ -40,11 +40,11 @@ Following is the basics of how our calculator functions when it receives an expr
 3.6 Returns the paranthesis value.
 4. Returns the final value.
 
-
 # Discussion
 fadsfds
+
 # Conclusion
-fdsafds
+While we would like to add threading of some sort, since we currently wait for each machine to calculate their part when distributing work, which somewhat defeats the purpose, our distributed calculator functions well, and computes correctly for all expressions we have tried so far. Input has some requirements for parantheses, such as evaluating cos(2) but not cos2.
 
 # References
 

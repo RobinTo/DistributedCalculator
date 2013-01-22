@@ -73,9 +73,9 @@ namespace Master
             }
         }
 
-        public static float CalculateExpression(string expression, List<string> paranthesis)
+        public static double CalculateExpression(string expression, List<string> paranthesis)
         {
-            float partialResult = 0;
+            double partialResult = 0;
 
             char[] operators = new char[] { '-', '+', '*', '/' };
 
@@ -84,9 +84,20 @@ namespace Master
                 char counter = (expression.Substring(expression.IndexOf("arg")-1, 1))[0];
                 expression = expression.Replace(counter + "arg", paranthesis[(int)(counter-97)]);
             }
-            
-            
-            
+
+            if (expression[0] == '-')
+            {
+                expression = expression.Substring(1, expression.Length - 1);
+                expression = expression.Insert(0, "neg");
+            }
+            expression = expression.Replace("*-", "*neg");
+            expression = expression.Replace("/-", "/neg");
+            expression = expression.Replace("+-", "+neg");
+            expression = expression.Replace("--", "-neg");
+            expression = expression.Replace("cos-", "cosneg");
+            expression = expression.Replace("sin-", "sinneg");
+            expression = expression.Replace("mod-", "modneg");
+            expression = expression.Replace("^-", "^neg");
 
             string[] expressionParts = expression.Split(operators, StringSplitOptions.RemoveEmptyEntries);
 
@@ -100,48 +111,48 @@ namespace Master
                 partialResult = 0;
                 try
                 {
-                    partialResult = float.Parse(expressionParts[i]);
+                    partialResult = double.Parse(expressionParts[i].Replace("neg", "-"));
                 }
                 catch (Exception e)
                 { }
                 if (expressionParts[i].Contains("mod"))
                 {
-                    float first = float.Parse(expressionParts[i].Substring(0, expressionParts[i].IndexOf("mod")));
-                    float second = float.Parse(expressionParts[i].Substring(expressionParts[i].IndexOf("mod") + 3, expressionParts[i].Length - (expressionParts[i].IndexOf("mod") + 3)));
+                    double first = double.Parse(expressionParts[i].Substring(0, expressionParts[i].IndexOf("mod")).Replace("neg", "-"));
+                    double second = double.Parse(expressionParts[i].Substring(expressionParts[i].IndexOf("mod") + 3, expressionParts[i].Length - (expressionParts[i].IndexOf("mod") + 3)).Replace("neg", "-"));
 
                     IModOrFactorial proxy = (IModOrFactorial)XmlRpcProxyGen.Create(typeof(IModOrFactorial));
-                    Result ret = proxy.Modulus((double)first, (double)second);
-                    partialResult = (float)ret.result;
+                    Result ret = proxy.Modulus(first, second);
+                    partialResult = ret.result;
                 }
                 if (expressionParts[i].Contains("cos"))
                 {
-                    float cosNumber = float.Parse(expressionParts[i].Substring(expressionParts[i].IndexOf("cos") + 3, expressionParts[i].Length - (expressionParts[i].IndexOf("cos") + 3)));
+                    double cosNumber = double.Parse(expressionParts[i].Substring(expressionParts[i].IndexOf("cos") + 3, expressionParts[i].Length - (expressionParts[i].IndexOf("cos") + 3)).Replace("neg", "-"));
                     ITrigonometry proxy = (ITrigonometry)XmlRpcProxyGen.Create(typeof(ITrigonometry));
-                    Result ret = proxy.Cosinus((double)cosNumber);
-                    partialResult = (float)ret.result;
+                    Result ret = proxy.Cosinus(cosNumber);
+                    partialResult = ret.result;
                 }
                 if (expressionParts[i].Contains("sin"))
                 {
-                    float sinNumber = float.Parse(expressionParts[i].Substring(expressionParts[i].IndexOf("sin") + 3, expressionParts[i].Length - (expressionParts[i].IndexOf("sin") + 3)));
+                    double sinNumber = double.Parse(expressionParts[i].Substring(expressionParts[i].IndexOf("sin") + 3, expressionParts[i].Length - (expressionParts[i].IndexOf("sin") + 3)).Replace("neg", "-"));
                     ITrigonometry proxy = (ITrigonometry)XmlRpcProxyGen.Create(typeof(ITrigonometry));
-                    Result ret = proxy.Sinus((double)sinNumber);
-                    partialResult = (float)ret.result;
+                    Result ret = proxy.Sinus(sinNumber);
+                    partialResult = ret.result;
                 }
                 if (expressionParts[i].Contains("^"))
                 {
-                    float first = float.Parse(expressionParts[i].Substring(0, expressionParts[i].IndexOf("^")));
-                    float second = float.Parse(expressionParts[i].Substring(expressionParts[i].IndexOf("^") + 1, expressionParts[i].Length - (expressionParts[i].IndexOf("^") + 1)));
+                    double first = double.Parse(expressionParts[i].Substring(0, expressionParts[i].IndexOf("^")).Replace("neg","-"));
+                    double second = double.Parse(expressionParts[i].Substring(expressionParts[i].IndexOf("^") + 1, expressionParts[i].Length - (expressionParts[i].IndexOf("^") + 1)).Replace("neg", "-"));
                     IPowerOf proxy = (IPowerOf)XmlRpcProxyGen.Create(typeof(IPowerOf));
-                    Result ret = proxy.PowerOf((double)first, (double)second);
-                    partialResult = (float)ret.result;
+                    Result ret = proxy.PowerOf(first, second);
+                    partialResult = ret.result;
                 }
                 if (expressionParts[i].Contains("!"))
                 {
-                    float first = float.Parse(expressionParts[i].Substring(0,expressionParts[i].Length-1));
+                    double first = double.Parse(expressionParts[i].Substring(0, expressionParts[i].Length - 1).Replace("neg", "-"));
                     IModOrFactorial proxy = (IModOrFactorial)XmlRpcProxyGen.Create(typeof(IModOrFactorial));
                     int first2 = Convert.ToInt32(first);
                     Result ret = proxy.Factorial(first2);
-                    partialResult = (float)ret.result;
+                    partialResult = ret.result;
                 }
 
                 expressionParts[i] = partialResult.ToString();
@@ -160,7 +171,7 @@ namespace Master
 
             expression = BasicOperator(expression, '-');
 
-            return float.Parse(expression);
+            return double.Parse(expression);
 
         }
 
@@ -181,7 +192,7 @@ namespace Master
 
                 try
                 {
-                    float f = float.Parse(expression.Replace("neg", "-"));
+                    double f = double.Parse(expression.Replace("neg", "-"));
                     return f.ToString();
                 }
                 catch(Exception e)
@@ -210,12 +221,12 @@ namespace Master
                 }
                 string firstString = expression.Substring(startIndex, expression.IndexOf(c) - startIndex);
                 firstString = firstString.Replace("neg", "-");
-                float first = float.Parse(firstString);
+                double first = double.Parse(firstString);
                 int start = expression.IndexOf(c) + 1;
                 int end = endIndex - expression.IndexOf(c) - 1;
                 string endString = expression.Substring(start, end);
                 endString = endString.Replace("neg", "-");
-                float second = float.Parse(endString);
+                double second = double.Parse(endString);
                 switch (c)
                 {
                     case '*':

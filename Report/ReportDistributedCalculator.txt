@@ -23,7 +23,24 @@ fdas
 ## Problem Statement
 fdsa
 # Implementation
-fdsa
+
+We implemented our calculator using C#. For communication between the machines we used the XML-RPC.net library, which handles communication between machines using the XML RPC protocol.
+
+The implementation uses one master machine which delegates tasks to three others when it receives an expression to calculate.
+
+Following is the basics of how our calculator functions when it receives an expression:
+1. Does some simple formatting required for correct reading, such as lower casing all letters, replacing . with , for decimals etc.
+2. Splits out all paranthesis by starting at the first left paranthesis it can find, and replaces it with a placeholder so that it knows which paranthesis belonged there.
+3. Then for each paranthesis it does the following:
+3.1 Puts back in values for any placeholders in the current parantheses, which starting at the leftmost left-parantheses ensures that expressions such as cos(cos(sin(5mod4))) would work correctly.
+3.2 Splits the current parantheses by basic operators and puts placeholders.
+3.3 For each of the expressions between basic operators it checks whether they contain cos, sin, mod, ^ or ! and sends them to another machine for calculation if they do.
+3.4 Replaces calculated values back into the original parantheses expression.
+3.5 Calculates * / + and - in the expression in said order.
+3.6 Returns the paranthesis value.
+4. Returns the final value.
+
+
 # Discussion
 fadsfds
 # Conclusion

@@ -1,0 +1,11 @@
+# Introduction
+
+In this chapter we highlight the background for this task, as well as our problem statement.
+
+## Background
+
+The task is part of the mandatory assignments in the course IKT414 Distributed and Agent-based Systems, at the University of Agder, campus Grimstad. During lectures we have learned about what a distributed system is, and can thus try to build our own.
+
+## Problem Statement
+
+The goal of this task is to program a calculator, that runs different different kind of operations on four different machines. There should be one master, which takes care of input, user interface and simple calculator operations; Addition, subtraction, multiplication and division. The second machine takes care of modulus and factorial, while the third and fourth respectively perform sinus/cosine and power. It is also required that the machines use XML RPC to communicate with each other.

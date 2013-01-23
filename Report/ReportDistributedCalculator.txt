@@ -3,11 +3,11 @@ $authors = Jon Vegard Jansen and Robin Tollisen
 $course = IKT414
 $semester = Spring 2013
 $place = Grimstad
-$date = 18th of January 2013
+$date = 23th of January 2013
 $status = Final
 $keywords = Distributed system, Calculator, C#, XML-RPC
 
-$abstract = lorem ipsum
+$abstract = This report reviews a mandatory task given at the University of Agder, campus Grimstad, in the course IKT414 Distributed and Agent-Based Systems. The task is to build a calculator, which divides its workload on four different machines.
 
 @file(frontpage.txt)
 
@@ -17,16 +17,25 @@ $ Contents | toc
 @toc
 
 # Introduction
-fasd
+
+In this chapter we highlight the background for this task, as well as our problem statement.
+
 ## Background
-fdas
+
+The task is part of the mandatory assignments in the course IKT414 Distributed and Agent-based Systems, at the University of Agder, campus Grimstad. During lectures we have learned about what a distributed system is, and can thus try to build our own.
+
 ## Problem Statement
-fdsa
+
+The goal of this task is to program a calculator, that runs different different kind of operations on four different machines. There should be one master, which takes care of input, user interface and simple calculator operations; Addition, subtraction, multiplication and division. The second machine takes care of modulus and factorial, while the third and fourth respectively perform sinus/cosine and power. It is also required that the machines use XML RPC to communicate with each other. @("http://xml-rpc.net/")
+
 # Implementation
 
-We implemented our calculator using C#. For communication between the machines we used the XML-RPC.net library, which handles communication between machines using the XML RPC protocol.
+We implemented our calculator using C#. For communication between the machines we used the XML-RPC.net library, which handles communication between machines using the XML RPC protocol. @("http://xml-rpc.net/")
+
 
 The implementation uses one master machine which delegates tasks to three others when it receives an expression to calculate.
+
+## Evaluation of expressions
 
 Following is the basics of how our calculator functions when it receives an expression:
 1. Does some simple formatting required for correct reading, such as lower casing all letters, replacing . with , for decimals etc.
@@ -40,11 +49,21 @@ Following is the basics of how our calculator functions when it receives an expr
 3.6 Returns the paranthesis value.
 4. Returns the final value.
 
+## User interface
+
+We chose to use a command line for the user to give input, instead of a graphical user interface. Since the task was not graphically or user-friendly related, we did not find it as useful.
+
 # Discussion
-fadsfds
+
+Our implementation does not use any sort of threading, since we currently wait for each machine to calculate their part when distributing work. Although this is one of the strengths with a distributed system, we did not see it important to speed up the calculator, as it is performing very well already.
+
+We looked at using binary trees to evaluate expressions, but we found it more convenient to operate on strings instead of first implementing a binary tree, based on the expression. While iterating through a binary tree, for instance using in-order traversal, the difficulty connected to build the tree in the first place, seemed more difficult than our solution.
+
+The calculator takes input from a command line, and not a graphical user interface (GUI). Using a GUI takes a little more time to create, with respect to graphics and design, but it would have given the user more input restrictions. Since we chose to not use a GUI, the program has to do more work on the input string, before it can calculate anything. Also, the user has to be careful to use parentheses, where required.
 
 # Conclusion
-While we would like to add threading of some sort, since we currently wait for each machine to calculate their part when distributing work, which somewhat defeats the purpose, our distributed calculator functions well, and computes correctly for all expressions we have tried so far. Input has some requirements for parantheses, such as evaluating cos(2) but not cos2.
+While we would like to add threading of some sort, and myabe a GUI, our distributed calculator functions well, and computes correctly for all expressions we have tried so far. Input can be a bit picky on requirements for parantheses, but it works and performs well.
+
 
 # References
 

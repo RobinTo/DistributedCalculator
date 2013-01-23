@@ -31,7 +31,7 @@
 <p style='text-align: center'><b>Project report for compulsory assignment in IKT414 in Spring 2013</b><br><br></p>
 <p style="text-align: center">Faculty of Engineering and Science
 <br>University of Agder
-<br>Grimstad, 18th of January 2013
+<br>Grimstad, 23th of January 2013
 </p>
 
 <p style='text-align: center'>Status: Final</p>
@@ -39,7 +39,7 @@
 
 <p><b>Keywords:</b> Distributed system, Calculator, C#, XML-RPC<br></p>
 
-<p><b>Abstract:</b><br>lorem ipsum</p>
+<p><b>Abstract:</b><br>This report reviews a mandatory task given at the University of Agder, campus Grimstad, in the course IKT414 Distributed and Agent-Based Systems. The task is to build a calculator, which divides its workload on four different machines.</p>
 
 
 
@@ -50,6 +50,8 @@
 <a href='#introduction_-_background' class='toc_2'>Background</a><br>
 <a href='#introduction_-_problem_statement' class='toc_2'>Problem Statement</a><br>
 <a href='#implementation' class='toc_1'>Implementation</a><br>
+<a href='#implementation_-_evaluation_of_expressions' class='toc_2'>Evaluation of expressions</a><br>
+<a href='#implementation_-_user_interface' class='toc_2'>User interface</a><br>
 <a href='#discussion' class='toc_1'>Discussion</a><br>
 <a href='#conclusion' class='toc_1'>Conclusion</a><br>
 <a href='#references' class='toc_1'>References</a><br>
@@ -57,21 +59,80 @@
 
 
 <h1 id='introduction'>Introduction</h1>
-fasd
+
+<p>
+In this chapter we highlight the background for this task, as well as our problem statement.
+</p>
+
 <h2 id='introduction_-_background'>Background</h2>
-fdas
+
+<p>
+The task is part of the mandatory assignments in the course IKT414 Distributed and Agent-based Systems, at the University of Agder, campus Grimstad. During lectures we have learned about what a distributed system is, and can thus try to build our own.
+</p>
+
 <h2 id='introduction_-_problem_statement'>Problem Statement</h2>
-fdsa
+
+<p>
+The goal of this task is to program a calculator, that runs different different kind of operations on four different machines. There should be one master, which takes care of input, user interface and simple calculator operations; Addition, subtraction, multiplication and division. The second machine takes care of modulus and factorial, while the third and fourth respectively perform sinus/cosine and power. It is also required that the machines use XML RPC to communicate with each other. <a href='http://xml-rpc.net/'>[1]</a>
+</p>
+
 <h1 id='implementation'>Implementation</h1>
-fdsa
+
+<p>
+We implemented our calculator using C#. For communication between the machines we used the XML-RPC.net library, which handles communication between machines using the XML RPC protocol. <a href='http://xml-rpc.net/'>[1]</a>
+</p>
+
+
+<p>
+The implementation uses one master machine which delegates tasks to three others when it receives an expression to calculate.
+</p>
+
+<h2 id='implementation_-_evaluation_of_expressions'>Evaluation of expressions</h2>
+
+<p>
+Following is the basics of how our calculator functions when it receives an expression:<br>
+1. Does some simple formatting required for correct reading, such as lower casing all letters, replacing . with , for decimals etc.<br>
+2. Splits out all paranthesis by starting at the first left paranthesis it can find, and replaces it with a placeholder so that it knows which paranthesis belonged there.<br>
+3. Then for each paranthesis it does the following:<br>
+3.1 Puts back in values for any placeholders in the current parantheses, which starting at the leftmost left-parantheses ensures that expressions such as cos(cos(sin(5mod4))) would work correctly.<br>
+3.2 Splits the current parantheses by basic operators and puts placeholders.<br>
+3.3 For each of the expressions between basic operators it checks whether they contain cos, sin, mod, ^ or ! and sends them to another machine for calculation if they do.<br>
+3.4 Replaces calculated values back into the original parantheses expression.<br>
+3.5 Calculates * / + and - in the expression in said order.<br>
+3.6 Returns the paranthesis value.<br>
+4. Returns the final value.
+</p>
+
+<h2 id='implementation_-_user_interface'>User interface</h2>
+
+<p>
+We chose to use a command line for the user to give input, instead of a graphical user interface. Since the task was not graphically or user-friendly related, we did not find it as useful.
+</p>
+
 <h1 id='discussion'>Discussion</h1>
-fadsfds
+
+<p>
+Our implementation does not use any sort of threading, since we currently wait for each machine to calculate their part when distributing work. Although this is one of the strengths with a distributed system, we did not see it important to speed up the calculator, as it is performing very well already.
+</p>
+
+<p>
+We looked at using binary trees to evaluate expressions, but we found it more convenient to operate on strings instead of first implementing a binary tree, based on the expression. While iterating through a binary tree, for instance using in-order traversal, the difficulty connected to build the tree in the first place, seemed more difficult than our solution.
+</p>
+
+<p>
+The calculator takes input from a command line, and not a graphical user interface (GUI). Using a GUI takes a little more time to create, with respect to graphics and design, but it would have given the user more input restrictions. Since we chose to not use a GUI, the program has to do more work on the input string, before it can calculate anything. Also, the user has to be careful to use parentheses, where required.
+</p>
+
 <h1 id='conclusion'>Conclusion</h1>
-fdsafds
+<p>
+While we would like to add threading of some sort, and myabe a GUI, our distributed calculator functions well, and computes correctly for all expressions we have tried so far. Input can be a bit picky on requirements for parantheses, but it works and performs well.
+</p>
+
 
 <h1 id='references'>References</h1>
 
 <div>
+<a id='reference_1' href='http://xml-rpc.net/'>[1] http://xml-rpc.net/ - XML-RPC.Net</a><br>
 </div>
 
 </body></html>
